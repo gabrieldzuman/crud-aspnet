@@ -1,0 +1,145 @@
+#CrudAppSolution
+
+Este é um projeto de CRUD (Create, Read, Update, Delete) para gerenciamento de produtos, desenvolvido com ASP.NET Core, Entity Framework Core, e utilizando boas práticas de arquitetura de software (camadas separadas para Domain, Data e Services). Ele conta também com validações via FluentValidation, gerenciamento de migrações com FluentMigrator, e testes unitários com xUnit.
+
+Sumário
+
+Instalação
+Estrutura do Projeto
+Migrações de Banco de Dados
+Executando a Aplicação
+Testes Unitários
+Docker
+Documentação Adicional
+Instalação
+
+Pré-requisitos
+.NET 7 SDK
+SQL Server (local ou via Docker)
+Docker (para rodar o container)
+Passos para Instalar
+Clone o Repositório
+cd CrudAppSolution
+
+Instale as Dependências
+Navegue até cada pasta do projeto (CrudApp.Api, CrudApp.Data, etc.) e execute o comando abaixo para restaurar as dependências:
+dotnet restore
+
+Configure o Banco de Dados
+No arquivo de configuração appsettings.json do projeto CrudApp.Api, configure a string de conexão para o seu banco de dados SQL 
+
+Server:
+
+"ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=CrudAppDB;User Id=sa;Password=root123;"
+}
+
+Estrutura do Projeto
+
+CrudApp.Domain: Define a entidade Produto.
+CrudApp.Data: Camada de acesso a dados, contendo o DbContext e o repositório.
+CrudApp.Services: Camada de serviço para validações e lógica de negócio.
+CrudApp.Api: API principal com o controlador que expõe os endpoints para CRUD.
+Migrações de Banco de Dados
+
+O projeto utiliza FluentMigrator para gerenciar as migrações. Siga os passos para aplicar as migrações:
+
+Instale o FluentMigrator.Cli (caso ainda não tenha):
+dotnet tool install -g FluentMigrator.Cli
+
+Rodar as Migrações
+No diretório raiz, execute o comando abaixo para aplicar as migrações:
+dotnet fm migrate -p CrudApp.Data -c "Server=localhost;Database=CrudAppDB;User Id=sa;Password=root123;"
+Nota: Atualize a string de conexão conforme necessário.
+
+Executando a Aplicação
+
+Executar o Projeto
+Navegue até a pasta CrudApp.Api e inicie a aplicação:
+
+cd CrudApp.Api
+dotnet run
+Acessar a API
+A API estará disponível em https://localhost:5001 ou http://localhost:5000.
+
+Endpoints Disponíveis:
+GET /api/produto: Lista todos os produtos
+GET /api/produto/{id}: Obter um produto por ID
+POST /api/produto: Adicionar um novo produto
+PUT /api/produto/{id}: Atualizar um produto existente
+DELETE /api/produto/{id}: Remover um produto
+Testes Unitários
+
+O projeto usa o xUnit para testes unitários. Os testes estão localizados no projeto CrudApp.Tests. Siga os passos para executar os testes:
+
+Executar os Testes
+Na raiz do projeto, rode:
+
+dotnet test
+Este comando executará os testes para verificar a lógica de negócio e validações do CRUD de produtos.
+Docker
+
+Para facilitar a execução do projeto, você pode utilizar o Docker para criar uma imagem e rodar um container da aplicação.
+
+Passos para Usar Docker
+Criar o Dockerfile
+Certifique-se de que o arquivo Dockerfile está configurado na pasta CrudApp.Api com o conteúdo necessário para compilar e rodar a aplicação ASP.NET Core.
+
+Build da Imagem Docker
+Na raiz do projeto, execute o comando para criar a imagem Docker:
+
+docker build -t crudapp:latest -f CrudApp.Api/Dockerfile .
+Executar o Container
+Agora, rode o container com a imagem criada:
+
+docker run -d -p 5000:80 --name crudapp-container crudapp:latest
+O container estará disponível em http://localhost:5000.
+
+Docker Compose (Opcional)
+Se você quiser rodar a aplicação e o banco de dados juntos usando Docker Compose, crie um arquivo docker-compose.yml na raiz com o seguinte conteúdo:
+
+version: '3.8'
+services:
+  app:
+    image: crudapp:latest
+    build:
+      context: .
+      dockerfile: CrudApp.Api/Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - db
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=root123
+    ports:
+      - "1433:1433"
+
+Rodar o Docker Compose
+Execute o comando abaixo para iniciar todos os serviços (API e banco de dados) usando Docker Compose:
+docker-compose up -d
+Parar e Remover os Containers
+
+Para parar e remover os containers criados pelo Docker Compose, execute:
+docker-compose down
+
+Documentação Adicional
+
+Estrutura do Projeto
+CrudApp.Domain: Define as entidades do sistema e suas propriedades.
+CrudApp.Data: Camada de acesso a dados com o DbContext e repositório.
+CrudApp.Services: Lógica de negócio e validações.
+CrudApp.Api: Camada de API com os endpoints para realizar operações CRUD.
+Boas Práticas e Padrões de Projeto
+SOLID: O projeto segue os princípios de SOLID, mantendo a separação de responsabilidades entre as camadas e utilizando injeção de dependência.
+Repository Pattern: Implementado na camada de dados para manipulação das entidades.
+Validação com FluentValidation: As validações de negócio são feitas de forma separada utilizando FluentValidation.
+
+Plano de Testes
+
+Os testes de unidade cobrem:
+Validações de dados de entrada (como preço maior que zero).
+Operações de CRUD na camada de serviço.
