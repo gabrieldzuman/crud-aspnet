@@ -1,4 +1,4 @@
-#CrudAppSolution
+# CrudAppSolution
 
 Este é um projeto de CRUD (Create, Read, Update, Delete) para gerenciamento de produtos, desenvolvido com ASP.NET Core, Entity Framework Core, e utilizando boas práticas de arquitetura de software (camadas separadas para Domain, Data e Services). Ele conta também com validações via FluentValidation, gerenciamento de migrações com FluentMigrator, e testes unitários com xUnit.
 
